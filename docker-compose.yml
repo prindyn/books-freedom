@@ -14,7 +14,14 @@ services:
             - app-network
         depends_on:
             - mysql
-
+            - tg-client
+    tg-client:
+        image: telegram-cli-daemon
+        container_name: tg-client
+        ports:
+            - '${TG_CLIENT_PORT:-2391}:2391'
+        networks:
+            - app-network
     mysql:
         image: 'mysql/mysql-server:8.0'
         ports:
@@ -45,4 +52,6 @@ networks:
         driver: bridge
 volumes:
     app-network-mysql:
+        driver: local
+    app-network-tg-client:
         driver: local

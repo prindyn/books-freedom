@@ -30,4 +30,7 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'telegram' => [
+        'socket' =>'tcp://172.17.0.1:' . env('TG_CLIENT_PORT')
+    ]
 ];
