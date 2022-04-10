@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use BotMan\BotMan\BotMan;
 use App\Contracts\BotFather;
-use App\Http\Controllers\Controller;
+use App\Http\Requests\ApiHandleBotRequest;
 
-class ApiBotController extends Controller
+class ApiBotController extends BaseController
 {
-    public function register(BotMan $botman, BotFather $botfather)
+    public function register(ApiHandleBotRequest $request, BotFather $botfather)
     {
-        dump($botfather->new());
+        $validated = $this->validateWith($this->validator, $request);
+
+        $result = $botfather->new($validated);
+
+        return response()->json($result, isset($result['errors']) ? 424 : 200);
     }
 }

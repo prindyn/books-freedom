@@ -3,20 +3,63 @@
 namespace App\Services\Botman;
 
 use App\Contracts\BotFather;
-use App\Services\Laragram\Laravel\TG;
-use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Facades\Storage;
-use Symfony\Component\Console\Output\BufferedOutput;
+use App\Services\Laragram\ITGAnswer;
+use App\Services\Laragram\TGAnswer;
 
-class TelegramBotFather implements BotFather
+class TelegramBotFather extends BaseBotFather implements BotFather
 {
-    public function new()
+    use TGAnswer;
+
+    protected function peer()
     {
-        return TG::sendMsg('BotFather', 'Hello there!');
+        return 'BotFather';
+    }
 
-        // Artisan::call("botfather:msg", ['message' => '/newbot']);
+    public function new(array $data)
+    {
+        $this->sendMsg($this->peer, '/newbot');
 
-        // return Artisan::output();
+        if (!$this->resultSuccess()) {
+            return [
+                'message' => ITGAnswer::BOT_REG_FAIL,
+                'errors' => ['BotFather did not answer on /newbot']
+            ];
+        }
+
+        if (!$this->commandAccepted()) {
+            return [
+                'message' => ITGAnswer::BOT_REG_FAIL,
+                'errors' => $this->getAnswer('text')
+            ];
+        }
+
+        $this->sendMsg($this->peer, $data['title']);
+
+        if (!$this->resultSuccess()) {
+            return [
+                'message' => ITGAnswer::BOT_REG_FAIL,
+                'errors' => ['BotFather did not answer after name setting']
+            ];
+        }
+
+        if (!$this->commandAccepted()) {
+            return [
+                'message' => ITGAnswer::BOT_REG_FAIL,
+                'errors' => $this->getAnswer('text')
+            ];
+        }
+
+        $this->sendMsg($this->peer, $data['username']);
+
+        if (!$this->commandAccepted()) {
+            return [
+                'message' => ITGAnswer::BOT_REG_FAIL,
+                'errors' => $this->getAnswer('text')
+            ];
+        }
+
+        return [
+            'message' => ITGAnswer::BOT_REG_SUCCESS,
+        ];
     }
 }

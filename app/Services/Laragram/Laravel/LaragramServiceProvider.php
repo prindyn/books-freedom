@@ -38,9 +38,7 @@ class LaragramServiceProvider extends ServiceProvider
             try {
                 $tg = new TG(Config::get('services.telegram.socket'));
             } catch (ClientException $e) {
-                Log::error($e->getMessage());
-
-                return;
+                return Log::error($e->getMessage());
             }
 
             return $tg;

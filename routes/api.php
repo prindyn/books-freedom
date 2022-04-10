@@ -21,6 +21,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::prefix('bot')->middleware('bot')->group(function () {
 
-    Route::name('bot-register')
-        ->match(['get', 'post'], '/register/{driver?}', [ApiBotController::class, 'register']);
+    Route::post('/register/{driver?}', [ApiBotController::class, 'register'])
+        ->name('bot-register');
 });
