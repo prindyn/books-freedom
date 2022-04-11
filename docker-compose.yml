@@ -16,7 +16,7 @@ services:
             - mysql
             - tg-client
     tg-client:
-        image: telegram-cli-daemon
+        image: vprindyn/telegram-cli-daemon
         container_name: tg-client
         ports:
             - '${TG_CLIENT_PORT:-2391}:2391'
