@@ -4,7 +4,7 @@ namespace App\Services\Botman\Brokers;
 
 use App\Services\Laragram\TG;
 
-class TelegramBroker extends TG
+class TelegramBroker extends TG implements BotBrokerInterface
 {
     public function __construct()
     {

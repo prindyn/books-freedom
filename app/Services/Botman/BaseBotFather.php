@@ -2,6 +2,7 @@
 
 namespace App\Services\Botman;
 
+use App\Services\Laragram\ITGAnswer;
 use Prophecy\Exception\Doubler\ClassNotFoundException;
 use Prophecy\Exception\Doubler\MethodNotFoundException;
 
@@ -26,12 +27,12 @@ abstract class BaseBotFather
     {
         $answer = is_array($this->answer) ? current($this->answer) : $this->answer;
 
-        if (!is_object($answer)) return null;
+        if (!is_object($answer)) return ITGAnswer::TG_CLI_RES_FAIL;
 
         return $key ? ($answer->{$key} ?? null) : $answer;
     }
 
-    protected function broker(string $broker, bool $setBroker = false): mixed
+    public function broker(string $broker, bool $setBroker = false): mixed
     {
         $brokers = $this->brokers();
 
@@ -51,6 +52,69 @@ abstract class BaseBotFather
         return $broker ? ($brokers[$broker] ?? null) : $brokers;
     }
 
+    public function validateResponse($peer = '')
+    {
+        $peer = $peer ? $peer : $this->peer();
+
+        if (!$this->resultSuccess()) {
+            return $this->errorResponse(ITGAnswer::BOT_RES_FAIL, ITGAnswer::BOT_NO_ANSWER);
+        }
+        try {
+            if (!$this->broker || !method_exists($this->broker, 'getHistory')) {
+
+                throw new MethodNotFoundException(
+                    "Broker does not support this method (getHistory)",
+                    get_class($this),
+                    'getHistory'
+                );
+            }
+            $this->answer = $this->broker->getHistory($peer, 1);
+
+            if (!$this->commandAccepted()) {
+                return $this->errorResponse(ITGAnswer::BOT_RES_FAIL, $this->getAnswer('text'));
+            }
+        } catch (MethodNotFoundException $e) {
+            return $this->errorResponse(ITGAnswer::BOT_RES_FAIL, $e->getMessage() . '');
+        }
+    }
+
+    public function response(string $message, bool $asJson = true): mixed
+    {
+        $response = ['message' => $message];
+
+        return $asJson ? die(json_encode($response)) : $response;
+    }
+
+    public function errorResponse(string $message, mixed $errors, bool $asJson = true): mixed
+    {
+        $errors = is_array($errors) ? $errors : [$errors];
+
+        $response = ['message' => $message, 'errors' => $errors];
+
+        return $asJson ? die(json_encode($response)) : $response;
+    }
+
+    public function __call(string $name, array $arguments): mixed
+    {
+        try {
+            if (!$this->broker || !method_exists($this->broker, $name)) {
+
+                throw new MethodNotFoundException(
+                    "Broker does not support this method ($name)",
+                    get_class($this),
+                    $name
+                );
+            }
+            $this->answer = $this->broker->$name(...$arguments);
+
+            sleep($this->waitForAnswer);
+
+            return $this->validateResponse();
+        } catch (MethodNotFoundException $e) {
+            return $this->errorResponse(ITGAnswer::BOT_RES_FAIL, $e->getMessage());
+        }
+    }
+
     protected function brokers(): array
     {
         return [
@@ -58,19 +122,9 @@ abstract class BaseBotFather
         ];
     }
 
-    public function __call(string $name, array $arguments): void
-    {
-        try {
-            if (!$this->broker) {
-                throw new MethodNotFoundException("Broker does not support this method.", get_class($this), $name);
-            }
-            $this->answer = $this->broker->$name(...$arguments);
-
-            sleep($this->waitForAnswer);
-        } catch (MethodNotFoundException $e) {
-            echo $e->getMessage();
-        }
-    }
-
     abstract protected function peer();
+
+    abstract public function resultSuccess();
+
+    abstract public function commandAccepted();
 }
