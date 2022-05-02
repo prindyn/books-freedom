@@ -8,12 +8,14 @@ import VueAxios from 'vue-axios'
 import '@/plugins/vue-composition-api'
 import vuetify from './plugins/vuetify'
 import '@resources/sass/styles/styles.scss'
+// import {TinkerComponent} from 'botman-tinker';
 import FlashMessage from '@smartweb/vue-flash-message';
 
 Vue.use(FlashMessage)
 Vue.use(VueAxios, axios)
 Vue.prototype.auth = auth;
 Vue.config.productionTip = false
+// Vue.component('botman-tinker', TinkerComponent);
 
 new Vue({
   router,

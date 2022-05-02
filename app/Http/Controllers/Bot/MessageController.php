@@ -3,22 +3,32 @@
 namespace App\Http\Controllers\Bot;
 
 use BotMan\BotMan\BotMan;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Conversations\ExampleConversation;
 use BotMan\BotMan\Messages\Incoming\Answer;
 
 class MessageController extends Controller
 {
-    public function index(BotMan $botman)
+    public function welcome(BotMan $bot)
     {
-        $this->askName($botman);
+        $bot->reply('Welcome to online books library!');
     }
 
-    public function askName(BotMan $botman)
+    public function hello(BotMan $bot)
     {
-        $botman->ask('Hello! What is your Name?', function (Answer $answer) {
+        $this->askName($bot);
+    }
+
+    public function askName(BotMan $bot)
+    {
+        $bot->ask('Hello! What is your Name?', function (Answer $answer) {
 
             $this->say('Nice to meet you ' . $answer->getText());
         });
+    }
+
+    public function startConversation(BotMan $bot)
+    {
+        $bot->startConversation(new ExampleConversation());
     }
 }
