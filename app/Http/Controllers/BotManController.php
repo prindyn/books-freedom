@@ -3,13 +3,10 @@
 namespace App\Http\Controllers;
 
 use BotMan\BotMan\BotMan;
-use BotMan\BotMan\BotManFactory;
-use BotMan\BotMan\BotManServiceProvider;
 use Illuminate\Http\Request;
 use BotMan\BotMan\Messages\Incoming\Answer;
-use BotMan\Drivers\Telegram\Providers\TelegramServiceProvider;
 
-class BotManController extends BaseController
+class BotManController extends Controller
 {
     /**
      * Place your BotMan logic here.

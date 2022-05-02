@@ -175,7 +175,6 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\BotManServiceProvider::class,
-        App\Services\Laragram\Laravel\LaragramServiceProvider::class,
 
     ],
 
@@ -231,7 +230,6 @@ return [
         'URL' => Illuminate\Support\Facades\URL::class,
         'Validator' => Illuminate\Support\Facades\Validator::class,
         'View' => Illuminate\Support\Facades\View::class,
-        'TG' => App\Services\Laragram\Laravel\TG::class,
 
     ],
 

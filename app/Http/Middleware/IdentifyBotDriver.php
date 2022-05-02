@@ -22,12 +22,6 @@ class IdentifyBotDriver
 
         if ($driver && file_exists(config_path("botman/$driver.php"))) {
 
-            app()->bind(BotFather::class, function ($app) use ($driver) {
-                $botfather = '\\App\\Services\\Botman\\' . ucfirst($driver) . 'BotFather';
-
-                return new $botfather;
-            });
-
             $driver = DriverManager::loadFromName(
                 ucfirst($driver),
                 config("botman.$driver"),
