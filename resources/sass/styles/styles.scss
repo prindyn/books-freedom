@@ -1,0 +1,23 @@
+// .v-input {
+//     max-height: 40px;
+// }
+
+.v-application .v-avatar.v-avatar-light-bg,
+.v-application .v-chip.v-chip-light-bg {
+    font-weight: 500 !important;
+    background-color: transparent !important;
+}
+
+.v-application .v-avatar.v-avatar-light-bg:before,
+.v-application .v-chip.v-chip-light-bg:before {
+    background-color: currentColor;
+    border-radius: inherit;
+    bottom: 0;
+    content: "";
+    left: 0;
+    opacity: 0.12;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+    top: 0;
+}
