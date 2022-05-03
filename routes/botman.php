@@ -3,6 +3,7 @@
 use BotMan\BotMan\BotMan;
 use Illuminate\Support\Facades\Route;
 use App\Conversations\StartConversation;
+use App\Http\Controllers\Bot\MainController;
 
 /*
 |--------------------------------------------------------------------------
@@ -17,9 +18,7 @@ use App\Conversations\StartConversation;
 
 Route::post('/', function (BotMan $bot) {
 
-    $bot->hears('/start|start', function($bot) {
-        $bot->startConversation(new StartConversation);
-    });
+    $bot->hears('/start|start', MainController::class . '@start');
 
     $bot->fallback(function (BotMan $bot) {
         $bot->reply('Sorry, I did not understand these commands.');

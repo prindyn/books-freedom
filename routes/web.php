@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApplicationController;
+use App\Http\Controllers\DevController;
 
 /*
 |--------------------------------------------------------------------------
@@ -15,5 +16,9 @@ use App\Http\Controllers\ApplicationController;
 */
 
 Route::get('/{any}', [ApplicationController::class, 'index'])
-    // ->where('any', '^(?!botman).*$');
-    ->where('any', '.*');
+    ->where(
+        'any',
+        (!empty(env('ROUTE_WEB_EXCLUDE')) ? '^(?!' . env('ROUTE_WEB_EXCLUDE') . ').*$' : '.*')
+    );
+
+Route::any('/dev', [DevController::class, 'index']);

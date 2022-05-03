@@ -66,6 +66,16 @@ const routes = [
     },
   },
   {
+    path: '/library',
+    name: 'pages-library',
+    component: () => import('@/views/pages/Register.vue'),
+    meta: {
+      layout: 'blank',
+      public: true,
+      unauth: true,
+    },
+  },
+  {
     path: '/error-404',
     name: 'error-404',
     component: () => import('@/views/Error.vue'),
