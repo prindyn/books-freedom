@@ -2,25 +2,33 @@
 
 namespace App\Conversations;
 
-use BotMan\BotMan\Messages\Conversations\Conversation;
+use App\Messages\Outgoing\Question;
 use BotMan\BotMan\Messages\Outgoing\Actions\Button;
-use BotMan\BotMan\Messages\Outgoing\Question;
 
-class StartConversation extends Conversation
+class StartConversation extends BaseConversation
 {
     /**
      * Start the conversation
      */
     public function run()
     {
-        $question = Question::create('Hi,<br>Would you like to relax with an interesting book, or shall we meet first?')
+        $question = Question::create('Hi, shall we find a book, or meet first?')
+            ->fallback('Please, make a choice...')
             ->addButtons([
-                Button::create('Find a book')->value('find_book'),
-                Button::create('Get acquainted')->value('get_acquainted'),
+                Button::create('Find a book')->value('findBook'),
+                Button::create('Get acquainted')->value('acquaintance'),
             ]);
 
-        return $this->ask($question, function ($answer) {
-            $this->say('Your choise is: ' . $answer->getValue());
-        }, []);
+        return $this->ask($question, function ($answer) use ($question) {
+
+            if ($answer->isInteractiveMessageReply()) {
+                $conversation = $this->conversationClass($answer->getValue());
+
+                return $this->bot->startConversation(new $conversation);
+            } else {
+                $question->setText('Please, make a choice...');
+                $this->repeat($question);
+            }
+        });
     }
 }
