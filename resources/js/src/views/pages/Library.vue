@@ -1,181 +1,226 @@
 <template>
-  <div class="auth-wrapper auth-v1">
-    <div class="auth-inner">
-      <v-card class="auth-card">
-        <!-- logo -->
-        <v-card-title class="d-flex align-center justify-center py-7">
-          <router-link to="/" class="d-flex align-center">
-            <v-img
-              :src="require('@/assets/images/logos/logo.svg').default"
-              max-height="30px"
-              max-width="30px"
-              alt="logo"
-              contain
-              class="me-3"
-            ></v-img>
+  <div class="library-wrapper library-v1">
+    <div class="library-inner">
+      <a id="prev" href="#prev" @click="prevPage" class="navlink"></a>
 
-            <h2 class="text-2xl font-weight-semibold">Materio</h2>
-          </router-link>
-        </v-card-title>
-
-        <!-- title -->
+      <v-card class="library-card">
         <v-card-text>
-          <p class="text-2xl font-weight-semibold text--primary mb-2">Adventure starts here 🚀</p>
-          <p class="mb-2">Make your app management easy and fun!</p>
+          <div id="read" class="scrolled"></div>
         </v-card-text>
-
-        <!-- login form -->
-        <v-card-text>
-          <v-form>
-            <v-text-field
-              v-model="user.name"
-              outlined
-              label="Username"
-              placeholder="JohnDoe"
-              hide-details
-              class="mb-3"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="user.email"
-              outlined
-              label="Email"
-              placeholder="john@example.com"
-              hide-details
-              class="mb-3"
-            ></v-text-field>
-
-            <v-text-field
-              v-model="user.password"
-              outlined
-              :type="isPasswordVisible ? 'text' : 'password'"
-              label="Password"
-              placeholder="············"
-              :append-icon="isPasswordVisible ? icons.mdiEyeOffOutline : icons.mdiEyeOutline"
-              hide-details
-              @click:append="isPasswordVisible = !isPasswordVisible"
-            ></v-text-field>
-
-            <v-checkbox v-model="user.privacy" hide-details class="mt-1">
-              <template #label>
-                <div class="d-flex align-center flex-wrap">
-                  <span class="me-2">I agree to</span><a href="javascript:void(0)">privacy policy &amp; terms</a>
-                </div>
-              </template>
-            </v-checkbox>
-
-            <v-btn @click="register" block color="primary" class="mt-6"> Sign Up </v-btn>
-          </v-form>
-        </v-card-text>
-
-        <!-- create new account  -->
-        <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
-          <span class="me-2"> Already have an account? </span>
-          <router-link :to="{ name: 'pages-login' }"> Sign in instead </router-link>
-        </v-card-text>
-
-        <!-- divider -->
-        <v-card-text class="d-flex align-center mt-2">
-          <v-divider></v-divider>
-          <span class="mx-5">or</span>
-          <v-divider></v-divider>
-        </v-card-text>
-
-        <!-- social link -->
-        <v-card-actions class="d-flex justify-center">
-          <v-btn v-for="link in socialLink" :key="link.icon" icon class="ms-1">
-            <v-icon :color="$vuetify.theme.dark ? link.colorInDark : link.color">
-              {{ link.icon }}
-            </v-icon>
-          </v-btn>
-        </v-card-actions>
       </v-card>
+      <a id="next" href="#next" @click="nextPage" class="navlink"></a>
     </div>
-
-    <!-- background triangle shape  -->
-    <img
-      class="auth-mask-bg"
-      height="190"
-      :src="require(`@/assets/images/misc/mask-${$vuetify.theme.dark ? 'dark' : 'light'}.png`).default"
-    />
-
-    <!-- tree -->
-    <v-img class="auth-tree" width="247" height="185" :src="require('@/assets/images/misc/tree.png').default"></v-img>
-
-    <!-- tree  -->
-    <v-img
-      class="auth-tree-3"
-      width="377"
-      height="289"
-      :src="require('@/assets/images/misc/tree-3.png').default"
-    ></v-img>
   </div>
 </template>
 
 <script>
 import { mdiFacebook, mdiTwitter, mdiGithub, mdiGoogle, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
 import { ref } from '@vue/composition-api'
+import Epub from 'epubjs'
+const DOWNLOAD_URL = 'stratieghiyi_i_taktiki_spilkuva.epub'
+global.epub = Epub
 
 export default {
+  data() {
+    return {
+      ifTitleAndMenuShow: false,
+      fontSizeList: [
+        {
+          fontSize: 12,
+        },
+        {
+          fontSize: 14,
+        },
+        {
+          fontSize: 16,
+        },
+        {
+          fontSize: 18,
+        },
+        {
+          fontSize: 20,
+        },
+        {
+          fontSize: 22,
+        },
+        {
+          fontSize: 24,
+        },
+      ],
+      defaultFontSize: 16,
+      themeList: [
+        {
+          name: 'default',
+          style: {
+            body: {
+              color: '#000',
+              background: '#fff',
+            },
+          },
+        },
+        {
+          name: 'eye',
+          style: {
+            body: {
+              color: '#000',
+              background: '#ceeaba',
+            },
+          },
+        },
+        {
+          name: 'night',
+          style: {
+            body: {
+              color: '#fff',
+              background: '#000',
+            },
+          },
+        },
+        {
+          name: 'gold',
+          style: {
+            body: {
+              color: '#000',
+              background: 'rgb(238, 232, 170)',
+            },
+          },
+        },
+      ],
+      defaultTheme: 0,
+      bookAvailable: false,
+      navigation: null,
+      progress: 0,
+    }
+  },
+  mounted() {
+    this.showEpub()
+  },
   methods: {
-    register() {
-      this.axios
-        .post('/api/register', this.user)
-        .then(({ data }) => {
-          this.flashMessage.success({ message: data.message })
-          this.$router.push('/login')
+    getCurrentLocation() {
+      if (this.rendition) {
+        this.showProgress()
+      }
+    },
+    showProgress() {
+      const currentLoction = this.rendition.currentLocation()
+      this.progress = this.bookAvailable ? this.locations.percentageFromCfi(currentLoction.start.cfi) : 0
+      this.progress = Math.round(this.progress * 100)
+    },
+    jumpTo(href) {
+      this.rendition.display(href).then(() => {
+        this.showProgress()
+      })
+      this.hideTitleAndMenu()
+    },
+    hideTitleAndMenu() {
+      this.ifTitleAndMenuShow = false
+      this.$refs.menuBar.hideSetting()
+      this.$refs.menuBar.hideContent()
+    },
+    onProgressChange(progress) {
+      const percentage = progress / 100
+      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      this.rendition.display(location)
+    },
+    setTheme(index) {
+      this.themes.select(this.themeList[index].name)
+      this.defaultTheme = index
+    },
+    registerTheme() {
+      this.themeList.forEach(theme => {
+        this.themes.register(theme.name, theme.style)
+      })
+    },
+    setFontSize(fontSize) {
+      this.defaultFontSize = fontSize
+      if (this.themes) {
+        this.themes.fontSize(fontSize + 'px')
+      }
+    },
+    toggleTitleAndMenu() {
+      this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
+      if (!this.ifTitleAndMenuShow) {
+        this.$refs.menuBar.hideSetting()
+      }
+    },
+    prevPage() {
+      if (this.rendition) {
+        this.rendition.prev().then(() => {
+          this.showProgress()
         })
-        .catch(({ response }) => {
-          const message = response.data.message.split('.')
-          this.flashMessage.error({ message: message[0] })
+      }
+    },
+    nextPage() {
+      if (this.rendition) {
+        this.rendition.next().then(() => {
+          this.showProgress()
+        })
+      }
+    },
+    showEpub() {
+      this.book = new Epub(DOWNLOAD_URL)
+      this.rendition = this.book.renderTo('read', {
+        flow: 'scrolled-doc',
+        width: '100%',
+      })
+      
+      this.rendition.display()
+      this.rendition.on('relocated', function (location) {
+        console.log(location)
+      })
+      this.rendition.on('rendered', function (section) {
+        var prevNav, nextNav, prevLabel, nextLabel
+        var nextSection = section.next()
+        var prevSection = section.prev()
+
+        if (nextSection) {
+          nextNav = this.book.navigation.get(nextSection.href)
+
+          if (nextNav) {
+            nextLabel = nextNav.label
+          } else {
+            nextLabel = 'next'
+          }
+
+          next.textContent = nextLabel + ' »'
+        } else {
+          next.textContent = ''
+        }
+
+        if (prevSection) {
+          prevNav = this.book.navigation.get(prevSection.href)
+
+          if (prevNav) {
+            prevLabel = prevNav.label
+          } else {
+            prevLabel = 'previous'
+          }
+
+          prev.textContent = '« ' + prevLabel
+        } else {
+          prev.textContent = ''
+        }
+      })
+
+      this.themes = this.rendition.themes
+      this.setFontSize(this.defaultFontSize)
+      this.registerTheme()
+      this.setTheme(this.defaultTheme)
+      this.book.ready
+        .then(() => {
+          this.navigation = this.book.navigation
+
+          return this.book.locations.generate()
+        })
+        .then(result => {
+          this.locations = this.book.locations
+          this.bookAvailable = true
         })
     },
-  },
-  setup() {
-    const isPasswordVisible = ref(false)
-    const user = {
-      name: ref('').value,
-      email: ref('').value,
-      password: ref('').value,
-      privacy: ref('').value,
-    }
-    const socialLink = [
-      {
-        icon: mdiFacebook,
-        color: '#4267b2',
-        colorInDark: '#4267b2',
-      },
-      {
-        icon: mdiTwitter,
-        color: '#1da1f2',
-        colorInDark: '#1da1f2',
-      },
-      {
-        icon: mdiGithub,
-        color: '#272727',
-        colorInDark: '#fff',
-      },
-      {
-        icon: mdiGoogle,
-        color: '#db4437',
-        colorInDark: '#db4437',
-      },
-    ]
-
-    return {
-      user,
-      socialLink,
-      isPasswordVisible,
-
-      icons: {
-        mdiEyeOutline,
-        mdiEyeOffOutline,
-      },
-    }
   },
 }
 </script>
 
 <style lang="scss">
-@import '~@resources/sass/preset/pages/auth.scss';
+@import '~@resources/sass/preset/pages/library.scss';
 </style>

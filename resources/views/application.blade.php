@@ -2,36 +2,36 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width,initial-scale=1.0">
-  <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
-  <meta name="csrf-token" content="{{ csrf_token() }}">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
 
-  <title>Materio – Free Vuetify Vuejs Laravel Admin Template</title>
+    <title>Materio – Free Vuetify Vuejs Laravel Admin Template</title>
 
-  <!-- Favicon -->
-  <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
-  <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="{{ asset('favicon.ico') }}">
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
 
-  <!-- Font -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <!-- Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
 
-  <script src="https://telegram.org/js/telegram-web-app.js"></script>
-  <script src="{{ asset(mix('js/app.js')) }}" defer></script>
-  <script>
-    console.log(window.Telegram.WebApp);
-  </script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
+    <script src="{{ asset(mix('js/app.js')) }}" defer></script>
 </head>
 
 <body>
-  <noscript>
-    <strong>We're sorry but Materio - Vuetify Vuejs Admin Template doesn't work properly without JavaScript enabled.
-      Please enable it to continue.</strong>
-  </noscript>
+    <noscript>
+        <strong>We're sorry but Materio - Vuetify Vuejs Admin Template doesn't work properly without JavaScript enabled.
+            Please enable it to continue.</strong>
+    </noscript>
 
-  <div id="app">
-  </div>
+    <div id="app">
+    </div>
 </body>
 
 </html>

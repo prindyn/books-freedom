@@ -1,0 +1,62 @@
+.library-wrapper {
+  display: flex;
+  min-height: calc(var(--vh, 1vh) * 100);
+  width: 100%;
+  flex-basis: 100%;
+  align-items: center;
+  padding: 0;
+
+  // common style for both v1 and v2
+  a {
+    text-decoration: unset;
+  }
+
+  // library v1
+  &.library-v1 {
+    align-items: start;
+    justify-content: center;
+    overflow: hidden;
+    padding: 1.5rem;
+
+    .library-mask-bg {
+      position: absolute;
+      bottom: 0;
+      width: 100%;
+    }
+    .library-tree,
+    .library-tree-3 {
+      position: absolute;
+    }
+    .library-tree {
+      bottom: 0;
+      left: 0;
+    }
+    .library-tree-3 {
+      bottom: 0;
+      right: 0;
+    }
+
+    .library-inner {
+      width: 50rem;
+      min-height: inherit;
+      z-index: 1;
+      .library-card {
+        padding: 0;
+      }
+    }
+    .library-card {
+      min-height: inherit;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  // library bg and tree hide in sm screen
+  .library-v1 {
+    .library-tree,
+    .library-tree-3,
+    .library-mask-bg {
+      display: none;
+    }
+  }
+}

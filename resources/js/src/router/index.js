@@ -36,11 +36,6 @@ const routes = [
     component: () => import('@/views/form-layouts/FormLayouts.vue'),
   },
   {
-    path: '/relays',
-    name: 'relays',
-    component: () => import('@/views/relays/Relays.vue'),
-  },
-  {
     path: '/pages/account-settings',
     name: 'pages-account-settings',
     component: () => import('@/views/pages/account-settings/AccountSettings.vue'),
@@ -68,11 +63,10 @@ const routes = [
   {
     path: '/library',
     name: 'pages-library',
-    component: () => import('@/views/pages/Register.vue'),
+    component: () => import('@/views/pages/Library.vue'),
     meta: {
       layout: 'blank',
       public: true,
-      unauth: true,
     },
   },
   {

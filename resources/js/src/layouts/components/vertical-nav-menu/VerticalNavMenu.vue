@@ -45,7 +45,7 @@
       <nav-menu-link title="Cards" :to="{ name: 'cards' }" :icon="icons.mdiCreditCardOutline"></nav-menu-link>
       <nav-menu-link title="Tables" :to="{ name: 'simple-table' }" :icon="icons.mdiTable"></nav-menu-link>
       <nav-menu-link title="Form Layouts" :to="{ name: 'form-layouts' }" :icon="icons.mdiFormSelect"></nav-menu-link>
-      <nav-menu-link title="Relays" :to="{ name: 'relays' }" :icon="icons.mdiElectricSwitch"></nav-menu-link>
+      <nav-menu-link title="Library" :to="{ name: 'pages-library' }" :icon="icons.mdiFormSelect"></nav-menu-link>
     </v-list>
     <a
       href="https://themeselection.com/products/materio-vuetify-vuejs-laravel-admin-template"
