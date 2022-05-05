@@ -1,29 +1,57 @@
 <template>
-  <div class="library-wrapper library-v1">
-    <div class="library-inner">
-      <a id="prev" href="#prev" @click="prevPage" class="navlink"></a>
-
-      <v-card class="library-card">
-        <v-card-text>
-          <div id="read" class="scrolled"></div>
+  <div class="lib-container">
+    <div class="row">
+      <div class="col col-10 book">
+        <v-card class="book-card">
+          <v-card-text>
+            <div @click="toggleTitleAndMenu"  id="read"></div>
+          </v-card-text>
+          <div v-show="ifTitleAndMenuShow" class="bookPanelBottom">
+            <v-slider
+              :value="progress"
+              step="0.01"
+              hide-details
+              :disabled="loader"
+              class="bookProgress"
+              @change="onProgressChange"
+            ></v-slider>
+            <v-pagination v-model="currentPage" :disabled="loader" :length="pagesLength" class="bookNav"></v-pagination>
+          </div>
+        </v-card>
+      </div>
+    </div>
+    <v-dialog v-model="loader" hide-overlay persistent class="bookLoader">
+      <v-card color="primary" dark>
+        <v-card-text class="pt-3">
+          Please wait...
+          <v-progress-linear indeterminate color="white" class="mb-0"></v-progress-linear>
         </v-card-text>
       </v-card>
-      <a id="next" href="#next" @click="nextPage" class="navlink"></a>
-    </div>
+    </v-dialog>
+    <div @click="toggleTitleAndMenu" class="menuLayour"></div>
   </div>
 </template>
 
 <script>
-import { mdiFacebook, mdiTwitter, mdiGithub, mdiGoogle, mdiEyeOutline, mdiEyeOffOutline } from '@mdi/js'
+import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { ref } from '@vue/composition-api'
 import Epub from 'epubjs'
-const DOWNLOAD_URL = 'stratieghiyi_i_taktiki_spilkuva.epub'
+const DOWNLOAD_URL = 'varta_u_gri.epub'
 global.epub = Epub
 
 export default {
+  props: {
+    lastPage: {
+      type: Number,
+      default: 1,
+    },
+  },
   data() {
     return {
-      ifTitleAndMenuShow: false,
+      icons: {
+        mdiChevronLeft,
+        mdiChevronRight,
+      },
       fontSizeList: [
         {
           fontSize: 12,
@@ -47,7 +75,6 @@ export default {
           fontSize: 24,
         },
       ],
-      defaultFontSize: 16,
       themeList: [
         {
           name: 'default',
@@ -86,11 +113,27 @@ export default {
           },
         },
       ],
+      book: null,
+      progress: 0,
+      loader: true,
+      navigation: null,
+      pagesLength: 0,
+      currentPage: 0,
+      prevSection: null,
+      nextSection: null,
       defaultTheme: 0,
       bookAvailable: false,
-      navigation: null,
-      progress: 0,
+      defaultFontSize: 16,
+      ifTitleAndMenuShow: false,
     }
+  },
+  watch: {
+    bookAvailable() {
+      this.loader = !this.bookAvailable
+    },
+    currentPage() {
+      this.onPaginationChange(this.currentPage)
+    },
   },
   mounted() {
     this.showEpub()
@@ -110,16 +153,22 @@ export default {
       this.rendition.display(href).then(() => {
         this.showProgress()
       })
-      this.hideTitleAndMenu()
+      // this.hideTitleAndMenu()
     },
     hideTitleAndMenu() {
       this.ifTitleAndMenuShow = false
       this.$refs.menuBar.hideSetting()
       this.$refs.menuBar.hideContent()
     },
+    onPaginationChange(page) {
+      const percentage = (page * 1) / this.pagesLength
+      const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      this.jumpTo(location)
+    },
     onProgressChange(progress) {
       const percentage = progress / 100
       const location = percentage > 0 ? this.locations.cfiFromPercentage(percentage) : 0
+      this.currentPage = this.locations.locationFromCfi(location)
       this.rendition.display(location)
     },
     setTheme(index) {
@@ -139,9 +188,10 @@ export default {
     },
     toggleTitleAndMenu() {
       this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
-      if (!this.ifTitleAndMenuShow) {
-        this.$refs.menuBar.hideSetting()
-      }
+      // this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
+      // if (!this.ifTitleAndMenuShow) {
+      //   this.$refs.menuBar.hideSetting()
+      // }
     },
     prevPage() {
       if (this.rendition) {
@@ -160,45 +210,33 @@ export default {
     showEpub() {
       this.book = new Epub(DOWNLOAD_URL)
       this.rendition = this.book.renderTo('read', {
-        flow: 'scrolled-doc',
+        flow: 'paginated',
         width: '100%',
       })
-      
+
       this.rendition.display()
       this.rendition.on('relocated', function (location) {
-        console.log(location)
+        // console.log(location)
       })
       this.rendition.on('rendered', function (section) {
         var prevNav, nextNav, prevLabel, nextLabel
-        var nextSection = section.next()
-        var prevSection = section.prev()
+        this.nextSection = section.next()
+        this.prevSection = section.prev()
 
-        if (nextSection) {
-          nextNav = this.book.navigation.get(nextSection.href)
+        if (this.nextSection) {
+          nextNav = this.book.navigation.get(this.nextSection.href)
 
           if (nextNav) {
             nextLabel = nextNav.label
-          } else {
-            nextLabel = 'next'
           }
-
-          next.textContent = nextLabel + ' »'
-        } else {
-          next.textContent = ''
         }
 
-        if (prevSection) {
-          prevNav = this.book.navigation.get(prevSection.href)
+        if (this.prevSection) {
+          prevNav = this.book.navigation.get(this.prevSection.href)
 
           if (prevNav) {
             prevLabel = prevNav.label
-          } else {
-            prevLabel = 'previous'
           }
-
-          prev.textContent = '« ' + prevLabel
-        } else {
-          prev.textContent = ''
         }
       })
 
@@ -209,11 +247,12 @@ export default {
       this.book.ready
         .then(() => {
           this.navigation = this.book.navigation
-
-          return this.book.locations.generate()
+          return this.book.locations.generate(1500)
         })
-        .then(result => {
+        .then(book => {
           this.locations = this.book.locations
+          this.pagesLength = this.locations.total
+          this.currentPage = this.lastPage
           this.bookAvailable = true
         })
     },
@@ -221,6 +260,10 @@ export default {
 }
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 @import '~@resources/sass/preset/pages/library.scss';
+.v-dialog__content--active {
+  height: 90vh !important;
+  background-color: #ffffff;
+}
 </style>

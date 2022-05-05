@@ -1,62 +1,61 @@
-.library-wrapper {
+.lib-container {
   display: flex;
-  min-height: calc(var(--vh, 1vh) * 100);
-  width: 100%;
-  flex-basis: 100%;
   align-items: center;
+  justify-content: center;
+  width: 100%;
   padding: 0;
-
-  // common style for both v1 and v2
-  a {
-    text-decoration: unset;
-  }
-
-  // library v1
-  &.library-v1 {
-    align-items: start;
-    justify-content: center;
-    overflow: hidden;
-    padding: 1.5rem;
-
-    .library-mask-bg {
-      position: absolute;
-      bottom: 0;
-      width: 100%;
-    }
-    .library-tree,
-    .library-tree-3 {
-      position: absolute;
-    }
-    .library-tree {
-      bottom: 0;
-      left: 0;
-    }
-    .library-tree-3 {
-      bottom: 0;
-      right: 0;
-    }
-
-    .library-inner {
-      width: 50rem;
-      min-height: inherit;
-      z-index: 1;
-      .library-card {
-        padding: 0;
-      }
-    }
-    .library-card {
-      min-height: inherit;
-    }
-  }
+  height: 100vh;
+  background-color: #ffffff;
 }
 
-@media (max-width: 600px) {
-  // library bg and tree hide in sm screen
-  .library-v1 {
-    .library-tree,
-    .library-tree-3,
-    .library-mask-bg {
-      display: none;
-    }
-  }
+.menuLayour {
+  top: 0;
+  left: 0;
+  position: fixed;
+  width: 100vw;
+  height: 85vh;
+}
+
+.lib-container .book {
+  width: 98vw;
+}
+
+.book {
+  position: relative;
+  height: 100vh;
+}
+
+.book .bookPanelBottom {
+  height: 100px;
+  width: 100vw;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  padding: 0 15px;
+  background-color: #ffffff;
+}
+
+.book .book-card {
+  border: none;
+  box-shadow: none !important;
+  height: inherit;
+}
+
+.book .bookPagin {
+  position: fixed;
+  top: 50%;
+}
+
+.book .bookPagin.nextPage {
+  right: 3%;
+}
+
+.book .bookPagin.prevPage {
+  left: 3%;
+}
+
+.book .book-card .v-card__text {
+  padding: 0;
+  max-height: 100vh;
+  overflow: auto;
 }
