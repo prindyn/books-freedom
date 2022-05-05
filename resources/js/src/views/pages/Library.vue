@@ -4,7 +4,7 @@
       <div class="col col-10 book">
         <v-card class="book-card">
           <v-card-text>
-            <div @click="toggleTitleAndMenu"  id="read"></div>
+            <div id="read"></div>
           </v-card-text>
           <div v-show="ifTitleAndMenuShow" class="bookPanelBottom">
             <v-slider
@@ -28,11 +28,25 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-    <div @click="toggleTitleAndMenu" class="menuLayour"></div>
+    <swipe-list
+      class="swipeContainer"
+      :items="mockSwipeList"
+      :revealed.sync="swiper"
+      @swipeout:contentclick="toggleTitleAndMenu"
+      @swipeout:click="toggleTitleAndMenu"
+      @swipeout:doubleclick="itemDblClick"
+    >
+      <template slot-scope="{}">
+        <div class="content"></div>
+      </template>
+      <template slot="left" slot-scope="{}"> </template>
+      <template slot="right" slot-scope="{}"> </template>
+    </swipe-list>
   </div>
 </template>
 
 <script>
+import { SwipeList, SwipeOut } from 'vue-swipe-actions'
 import { mdiChevronLeft, mdiChevronRight } from '@mdi/js'
 import { ref } from '@vue/composition-api'
 import Epub from 'epubjs'
@@ -46,8 +60,15 @@ export default {
       default: 1,
     },
   },
+  components: {
+    SwipeOut,
+    SwipeList,
+  },
   data() {
     return {
+      swiper: {},
+      enabled: true,
+      mockSwipeList: [{}],
       icons: {
         mdiChevronLeft,
         mdiChevronRight,
@@ -128,6 +149,13 @@ export default {
     }
   },
   watch: {
+    swiper() {
+      if (this.swiper[0] == 'left') {
+        this.currentPage--
+      } else if (this.swiper[0] == 'right') {
+        this.currentPage++
+      }
+    },
     bookAvailable() {
       this.loader = !this.bookAvailable
     },
@@ -139,6 +167,46 @@ export default {
     this.showEpub()
   },
   methods: {
+    revealFirstRight() {
+      this.$refs.list.revealRight(0)
+    },
+    revealFirstLeft() {
+      this.$refs.list.revealLeft(0)
+    },
+    closeFirst() {
+      this.$refs.list.closeActions(0)
+    },
+    closeAll() {
+      this.$refs.list.closeActions()
+    },
+    remove(item) {
+      this.mockSwipeList = this.mockSwipeList.filter(i => i !== item)
+      // console.log(e, 'remove');
+    },
+    itemClick(e) {
+      console.log(e, 'item click')
+    },
+    fbClick(e) {
+      console.log(e, 'First Button Click')
+    },
+    sbClick(e) {
+      console.log(e, 'Second Button Click')
+    },
+    contentClick(e) {
+      console.log(e, 'content click')
+    },
+    itemClick(e) {
+      console.log(e, 'item click')
+    },
+    itemDblClick(e) {
+      console.log(e, 'item double click')
+    },
+    fbClick(e) {
+      console.log(e, 'First Button Click')
+    },
+    sbClick(e) {
+      console.log(e, 'Second Button Click')
+    },
     getCurrentLocation() {
       if (this.rendition) {
         this.showProgress()
@@ -261,6 +329,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+@import 'vue-swipe-actions/dist/vue-swipe-actions.css';
 @import '~@resources/sass/preset/pages/library.scss';
 .v-dialog__content--active {
   height: 90vh !important;

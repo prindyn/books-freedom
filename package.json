@@ -42,6 +42,7 @@
         "vue-apexcharts": "^1.6.2",
         "vue-axios": "^3.4.1",
         "vue-router": "^3.5.3",
+        "vue-swipe-actions": "^2.0.0-beta.20",
         "vuetify": "^2.4.0",
         "vuetifyjs-mix-extension": "0.0.20",
         "vuex": "^3.4.0",
