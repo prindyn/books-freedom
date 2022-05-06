@@ -62,10 +62,19 @@ const routes = [
   },
   {
     path: '/library',
-    name: 'pages-library',
-    component: () => import('@/views/pages/Library.vue'),
+    name: 'library',
+    component: () => import('@/pages/Library.vue'),
     meta: {
-      layout: 'blank',
+      layout: 'lib-content',
+      public: true,
+    },
+  },
+  {
+    path: '/read',
+    name: 'read',
+    component: () => import('@/pages/ReadBook.vue'),
+    meta: {
+      layout: 'lib-content',
       public: true,
     },
   },
