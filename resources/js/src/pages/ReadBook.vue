@@ -1,6 +1,6 @@
 <template>
   <div>
-    <top-book-navigator :is-drawer-open.sync="ifTopMenuShow"></top-book-navigator>
+    <top-book-navigator :is-drawer-open.sync="ifTopNavbarShow"></top-book-navigator>
     <div v-swiper:bookSwiper="swiperOption" @tap="onSwiperTap" @slideChange="onSwipeChange">
       <div class="swiper-wrapper">
         <div class="swiper-slide" :key="key" v-for="(page, key) in pages">
@@ -8,7 +8,12 @@
         </div>
       </div>
     </div>
-    <foot-book-navigator :is-drawer-open.sync="ifTitleAndMenuShow"></foot-book-navigator>
+    <foot-book-navigator
+      :pages-total="pagesTotal"
+      :cur-nav-page="currentPage"
+      @navpageupdate="onCurNavPageUpdate"
+      :is-drawer-open.sync="ifBottomNavbarShow"
+    ></foot-book-navigator>
   </div>
 </template>
 
@@ -33,20 +38,19 @@ export default {
     VerticalNavMenu,
   },
   setup() {
-    const ifTopMenuShow = ref(null)
-    const ifTitleAndMenuShow = ref(null)
     return {
       book: null,
       pages: null,
       bookName: null,
+      pagesTotal: 0,
       currentPage: 0,
       rendition: null,
       locations: null,
       navigation: null,
+      overActivePages: 1,
       isBookAvailable: false,
-      ifTopMenuShow,
-      ifTitleAndMenuShow,
-      pagesOverActive: 2,
+      ifTopNavbarShow: false,
+      ifBottomNavbarShow: false,
       pagesHistory: {},
       swiperOption: {
         pagination: {
@@ -63,15 +67,18 @@ export default {
   },
   methods: {
     onSwiperTap() {
-      if (!this.ifTitleAndMenuShow && !this.ifTopMenuShow) {
+      if (!this.ifBottomNavbarShow && !this.ifTopNavbarShow) {
         setTimeout(() => {
-          this.ifTopMenuShow = !this.ifTopMenuShow
-          this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
+          this.ifTopNavbarShow = !this.ifTopNavbarShow
+          this.ifBottomNavbarShow = !this.ifBottomNavbarShow
         }, 100)
       }
     },
     onSwipeChange() {
       this.jumpTo(this.bookSwiper.activeIndex)
+    },
+    onCurNavPageUpdate(page) {
+      this.bookSwiper.slideTo(page)
     },
     charsPerPage() {
       const fontSize = 16
@@ -111,8 +118,9 @@ export default {
       })
     },
     async jumpTo(page) {
-      const startActive = Math.max(0, page - this.pagesOverActive)
-      const endActive = Math.min(this.pages.length, page + this.pagesOverActive + 1)
+      this.currentPage = this.bookSwiper.activeIndex
+      const startActive = Math.max(0, page - this.overActivePages)
+      const endActive = Math.min(this.pages.length, page + this.overActivePages + 1)
       let activePages = [...Array(endActive).keys()].slice(startActive, endActive)
       this.updatePagesHistory(activePages).then(() => {
         activePages.forEach(page => {

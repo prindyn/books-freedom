@@ -4,7 +4,7 @@
     absolute
     floating
     hide-overlay
-    height="50px"
+    height="3rem"
     width="100%"
     :value="isDrawerOpen"
     @input="val => $emit('update:is-drawer-open', val)"
