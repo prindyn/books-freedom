@@ -14,6 +14,9 @@
       @navpageupdate="onCurNavPageUpdate"
       :is-drawer-open.sync="ifBottomNavbarShow"
     ></foot-book-navigator>
+    <v-overlay :value="loader">
+      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    </v-overlay>
   </div>
 </template>
 
@@ -41,6 +44,7 @@ export default {
     return {
       book: null,
       pages: null,
+      loader: true,
       bookName: null,
       pagesTotal: 0,
       currentPage: 0,
@@ -64,6 +68,11 @@ export default {
     this.book = new Book()
     this.bookName = 'varta_u_gri.epub'
     this.openBook()
+  },
+  watch: {
+    isBookAvailable() {
+      this.loader = !this.isBookAvailable
+    },
   },
   methods: {
     onSwiperTap() {
