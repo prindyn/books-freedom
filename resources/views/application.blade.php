@@ -22,6 +22,10 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.1.5/jszip.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/epubjs/dist/epub.min.js"></script>
     <script src="{{ asset(mix('js/app.js')) }}" defer></script>
+    <script>
+        window._url = '{{ url('') }}';
+        window._asset = '{{ asset('') }}';
+    </script>
 </head>
 
 <body>

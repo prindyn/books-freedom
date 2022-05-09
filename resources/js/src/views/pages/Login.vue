@@ -61,7 +61,7 @@
         <!-- create new account  -->
         <v-card-text class="d-flex align-center justify-center flex-wrap mt-2">
           <span class="me-2"> New on our platform? </span>
-          <router-link :to="{ name: 'pages-register' }"> Create an account </router-link>
+          <router-link :to="{ name: 'register' }"> Create an account </router-link>
         </v-card-text>
 
         <!-- divider -->

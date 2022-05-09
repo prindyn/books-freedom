@@ -6,6 +6,7 @@ import router from './router'
 import { auth } from './utils'
 import 'swiper/css/swiper.css'
 import VueAxios from 'vue-axios'
+import trans from './mixins/trans'
 import '@/plugins/vue-composition-api'
 import vuetify from './plugins/vuetify'
 import '@resources/sass/styles/styles.scss'
@@ -17,6 +18,7 @@ Vue.use(VueAxios, axios)
 Vue.prototype.auth = auth;
 Vue.config.productionTip = false
 Vue.use(VueAwesomeSwiper)
+Vue.mixin(trans);
 
 new Vue({
   router,

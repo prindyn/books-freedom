@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\BookController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\PassportAuthController;
@@ -20,4 +21,9 @@ Route::post('login', [PassportAuthController::class, 'login']);
 
 Route::middleware('auth:api')->group(function () {
     Route::post('/logout', [PassportAuthController::class, 'logout']);
+});
+
+Route::controller(BookController::class)->group(function () {
+    Route::get('books/request/{book}', 'request');
+    Route::get('books/download/{book}', 'download');
 });

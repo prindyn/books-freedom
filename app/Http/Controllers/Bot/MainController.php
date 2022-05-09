@@ -16,7 +16,7 @@ class MainController extends Controller
             ->type(Keyboard::TYPE_INLINE)
             ->addRow(
                 KeyboardButton::create("Library")
-                    ->webAppInfo(WebAppInfo::url(env('TG_WEBHOOK_URL') . '/library'))
+                    ->webAppInfo(WebAppInfo::url(env('TG_WEBHOOK_URL') . '/read?book=varta_u_gri'))
             )
             ->toArray();
         $bot->reply('Hi, shall we find a book, or meet first?', $keyboard);

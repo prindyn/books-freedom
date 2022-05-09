@@ -42,8 +42,8 @@ const routes = [
   },
   {
     path: '/login',
-    name: 'pages-login',
-    component: () => import('@/views/pages/Login.vue'),
+    name: 'login',
+    component: () => import('@/pages/Login.vue'),
     meta: {
       layout: 'blank',
       public: true,
@@ -52,8 +52,8 @@ const routes = [
   },
   {
     path: '/register',
-    name: 'pages-register',
-    component: () => import('@/views/pages/Register.vue'),
+    name: 'register',
+    component: () => import('@/pages/Register.vue'),
     meta: {
       layout: 'blank',
       public: true,

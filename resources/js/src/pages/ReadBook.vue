@@ -1,6 +1,6 @@
 <template>
   <div>
-    <top-book-navigator :is-drawer-open.sync="ifTopNavbarShow"></top-book-navigator>
+    <top-book-navigator :is-drawer-open.sync="ifTitleAndMenuShow"></top-book-navigator>
     <div v-swiper:bookSwiper="swiperOption" @tap="onSwiperTap" @slideChange="onSwipeChange">
       <div class="swiper-wrapper">
         <div class="swiper-slide" :key="key" v-for="(page, key) in pages">
@@ -11,18 +11,26 @@
     <foot-book-navigator
       :pages-total="pagesTotal"
       :cur-nav-page="currentPage"
-      @navpageupdate="onCurNavPageUpdate"
-      :is-drawer-open.sync="ifBottomNavbarShow"
+      @navPageUpdate="onCurNavPageUpdate"
+      :is-drawer-open.sync="ifTitleAndMenuShow"
     ></foot-book-navigator>
-    <v-overlay :value="loader">
-      <v-progress-circular indeterminate size="64"></v-progress-circular>
+    <v-overlay color="transparent" :value="loader">
+      <v-progress-circular color="var(--v-anchor-base)" indeterminate size="64"></v-progress-circular>
+    </v-overlay>
+    <v-overlay color="transparent" :value="!loader && !pagesTotal">
+      <div class="text-center">
+        <v-btn icon @click="readBook()">
+          <v-icon color="var(--v-anchor-base)" x-large>{{ icons.mdiRefresh }}</v-icon>
+        </v-btn>
+      </div>
+      <div class="text-center" style="color: var(--v-info-base)">Please, try again</div>
     </v-overlay>
   </div>
 </template>
 
 <script>
 import Book from 'epubjs'
-import { ref } from '@vue/composition-api'
+import { mdiRefresh } from '@mdi/js'
 import Rendition from 'epubjs/src/rendition'
 import VerticalNavMenu from '../layouts/components/vertical-nav-menu/VerticalNavMenu.vue'
 import TopBookNavigator from '../layouts/components/lib-nav-menu/TopBookNavigator.vue'
@@ -44,7 +52,7 @@ export default {
     return {
       book: null,
       pages: null,
-      loader: true,
+      loader: false,
       bookName: null,
       pagesTotal: 0,
       currentPage: 0,
@@ -53,8 +61,7 @@ export default {
       navigation: null,
       overActivePages: 1,
       isBookAvailable: false,
-      ifTopNavbarShow: false,
-      ifBottomNavbarShow: false,
+      ifTitleAndMenuShow: false,
       pagesHistory: {},
       swiperOption: {
         pagination: {
@@ -62,12 +69,13 @@ export default {
           // clickable: true,
         },
       },
+      icons: {
+        mdiRefresh,
+      },
     }
   },
   mounted() {
-    this.book = new Book()
-    this.bookName = 'varta_u_gri.epub'
-    this.openBook()
+    this.readBook('varta_u_gri.epub')
   },
   watch: {
     isBookAvailable() {
@@ -76,12 +84,9 @@ export default {
   },
   methods: {
     onSwiperTap() {
-      if (!this.ifBottomNavbarShow && !this.ifTopNavbarShow) {
-        setTimeout(() => {
-          this.ifTopNavbarShow = !this.ifTopNavbarShow
-          this.ifBottomNavbarShow = !this.ifBottomNavbarShow
-        }, 100)
-      }
+      setTimeout(() => {
+        this.ifTitleAndMenuShow = !this.ifTitleAndMenuShow
+      }, 100)
     },
     onSwipeChange() {
       this.jumpTo(this.bookSwiper.activeIndex)
@@ -140,9 +145,32 @@ export default {
         })
       })
     },
-    openBook() {
+    readBook(book = '') {
+      this.loader = true
+      this.book = new Book()
+      this.bookName = book ? book : this.bookName
+      this.requestBook(this.bookName).then(requested => {
+        setTimeout(() => this.openBook(requested), 1000)
+      })
+    },
+    requestBook(book) {
+      return new Promise(resolve => {
+        this.axios
+          .get('api/books/request/' + book)
+          .then(({ data }) => {
+            return resolve(data.book ? data.book : '')
+          })
+          .catch(error => {
+            return resolve('')
+          })
+      })
+    },
+    openBook(book) {
+      if (!book) {
+        return (this.loader = false)
+      }
       this.currentPage = this.lastPage
-      this.book.open(this.bookName, 'epub')
+      this.book.open('api/books/download/' + book, 'epub')
       this.rendition = new Rendition(this.book, {
         flow: 'paginated',
         height: '100%',

@@ -1,22 +1,19 @@
 <template>
-  <v-navigation-drawer
-    clipped
-    absolute
-    floating
-    hide-overlay
-    height="3rem"
-    width="100%"
-    :value="isDrawerOpen"
-    @input="val => $emit('update:is-drawer-open', val)"
-  >
-    <v-list-item>
-      <v-list-item-content>
-        <v-list-item-title>John Leider</v-list-item-title>
-      </v-list-item-content>
-    </v-list-item>
-  </v-navigation-drawer>
+  <div class="text-center">
+    <v-bottom-sheet
+      content-class="sheet-pos-top"
+      :value="isDrawerOpen"
+      inset
+      hide-overlay
+      persistent
+      no-click-animation
+    >
+      <v-toolbar>
+        <v-toolbar-title>Title</v-toolbar-title>
+      </v-toolbar>
+    </v-bottom-sheet>
+  </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -25,19 +22,24 @@ export default {
       default: null,
     },
   },
-  data() {
-    return {
-      mini: true,
-    }
+  setup() {
+    return {}
   },
 }
 </script>
-
 <style lang="scss" scoped>
-.v-navigation-drawer--close {
-  transform: translateY(-100%) !important;
+.v-card::v-deep {
+  .v-input {
+    padding: 0 1rem;
+    margin-top: -1.2rem;
+  }
+  .v-input__control {
+    height: 2rem !important;
+  }
 }
-.v-navigation-drawer--open {
-  transform: translateY(0%) !important;
+.v-dialog__content {
+  top: 0 !important;
+  bottom: auto !important;
+  height: fit-content !important;
 }
 </style>

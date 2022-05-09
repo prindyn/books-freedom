@@ -1,37 +1,29 @@
 <template>
-  <v-navigation-drawer
-    bottom
-    absolute
-    hide-overlay
-    height="7rem"
-    width="100%"
-    :value="isDrawerOpen"
-    @input="val => $emit('update:is-drawer-open', val)"
-  >
-    <v-list-item>
-      <v-list-item-content>
-        <div class="text-center">
+  <div class="text-center">
+    <v-bottom-sheet :value="isDrawerOpen" inset hide-overlay persistent no-click-animation>
+      <v-card tile>
+        <v-list>
           <v-slider
-            height="2rem"
             v-model="curPage"
-            hideDetails
             min="0"
             :max="pagesTotal"
-            @mouseup="() => $emit('navpageupdate', curPage - 1)"
+            @mouseup="() => $emit('navPageUpdate', curPage - 1)"
           ></v-slider>
-          <v-pagination
-            v-model="curPage"
-            @input="() => $emit('navpageupdate', curPage - 1)"
-            :length="pagesTotal"
-            :total-visible="6"
-            circle
-          ></v-pagination>
-        </div>
-      </v-list-item-content>
-    </v-list-item>
-  </v-navigation-drawer>
+          <v-list-item>
+            <v-list-item-content>
+              <v-pagination
+                v-model="curPage"
+                @input="() => $emit('navPageUpdate', curPage - 1)"
+                :length="pagesTotal"
+                circle
+              ></v-pagination>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-bottom-sheet>
+  </div>
 </template>
-
 <script>
 export default {
   props: {
@@ -49,9 +41,8 @@ export default {
     },
   },
   setup() {
-    const curPage = 0
     return {
-      curPage,
+      curPage: 1,
     }
   },
   mounted() {
@@ -64,19 +55,19 @@ export default {
   },
 }
 </script>
-
 <style lang="scss" scoped>
-.v-navigation-drawer--close {
-  position: fixed !important;
-  transform: translateY(100%) !important;
+.v-card::v-deep {
+  .v-input {
+    padding: 0 1rem;
+    margin-top: -1.2rem;
+  }
+  .v-input__control {
+    height: 2rem !important;
+  }
 }
-.v-navigation-drawer--open {
-  transform: translateY(0%) !important;
-}
-.v-navigation-drawer__content .v-list-item {
-  padding: 0 !important;
-}
-.v-navigation-drawer__content .v-list-item__content {
-  display: flow-root;
+.v-dialog__content {
+  top: auto !important;
+  bottom: 0 !important;
+  height: fit-content !important;
 }
 </style>

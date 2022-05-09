@@ -35,8 +35,8 @@
         :icon="icons.mdiAccountCogOutline"
       ></nav-menu-link>
       <nav-menu-group title="Pages" :icon="icons.mdiFileOutline">
-        <nav-menu-link title="Login" :to="{ name: 'pages-login' }" target="_blank"></nav-menu-link>
-        <nav-menu-link title="Register" :to="{ name: 'pages-register' }" target="_blank"></nav-menu-link>
+        <nav-menu-link title="Login" :to="{ name: 'login' }" target="_blank"></nav-menu-link>
+        <nav-menu-link title="Register" :to="{ name: 'register' }" target="_blank"></nav-menu-link>
         <nav-menu-link title="Error" :to="{ name: 'error-404' }" target="_blank"></nav-menu-link>
       </nav-menu-group>
       <nav-menu-section-title title="USER INTERFACE"></nav-menu-section-title>

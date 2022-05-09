@@ -1,20 +1,14 @@
 <template>
   <div>
-    <v-row>
-      <v-col v-for="book in books" :key="book.id" cols="12" md="6" lg="4">
-        <v-card>
-          <v-card-title>{{ book.title }}</v-card-title>
-          <v-card-text>{{ book.desc }}</v-card-text>
-          <v-card-actions class="dense">
-            <v-btn icon :to="{ path: 'read', query: { book: book.name } }"
-              ><v-icon>
-                {{ icons.mdiBookOpenVariant }}
-              </v-icon></v-btn
-            >
-          </v-card-actions>
-        </v-card>
-      </v-col>
-    </v-row>
+    <div v-swiper:bookSwiper="swiperOption" class='vertical-swiper'>
+      <div class="swiper-wrapper vertical-swiper">
+        <div class="swiper-slide vertical-swiper" :key="key" v-for="(book, key) in books">
+          <v-sheet :id="'book-' + key" color="white" elevation="1" height="100vh" width="100vw">
+            {{ 'Book: ' + key }}
+          </v-sheet>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -31,11 +25,20 @@ export default {
         title: 'Варта у грі',
         desc: 'Опис книги',
       },
+      {
+        id: 2,
+        name: 'varta_u_gri',
+        title: 'Варта у грі',
+        desc: 'Опис книги',
+      },
     ]
     return {
       books,
       icons: {
         mdiBookOpenVariant,
+      },
+      swiperOption: {
+        class: 'vertical-swiper',
       },
     }
   },
@@ -44,11 +47,4 @@ export default {
 
 <style lang="scss" scoped>
 @import '@resources/sass//preset/mixins.scss';
-
-.avatar-center {
-  top: -2rem;
-  left: 1rem;
-  border: 3px solid white;
-  position: absolute;
-}
 </style>
