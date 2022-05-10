@@ -8,6 +8,6 @@ class DevController extends Controller
 {
     public function index(Request $request)
     {
-        return view('botman.book');
+        dd($request);
     }
 }

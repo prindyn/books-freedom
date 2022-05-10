@@ -24,6 +24,8 @@ Route::middleware('auth:api')->group(function () {
 });
 
 Route::controller(BookController::class)->group(function () {
+    Route::get('books', 'books');
+    Route::post('books', 'store');
     Route::get('books/request/{book}', 'request');
     Route::get('books/download/{book}', 'download');
 });

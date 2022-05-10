@@ -2,14 +2,46 @@
 
 namespace App\Http\Controllers\Api;
 
+use Exception;
+use lywzx\epub\EpubParser;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Exception;
+use App\Models\Book;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
     const REQUEST_EXPIRE = 5;
+
+    public function store(Request $request)
+    {
+        if ($request->cover) {
+
+            $filename = md5(uniqid() . now()) . '.' . File::extension($request->cover->getClientOriginalName());
+
+            Storage::putFileAs("books/covers", $request->cover, $filename);
+
+            $request->merge(['cover' => $filename]);
+        }
+
+        $book = new Book($request->all());
+        $book->save();
+
+        return response()->json(
+            [
+                'success' => true,
+                'message' => 'Book created successfully'
+            ]
+        );
+    }
+
+    public function books(Request $request)
+    {
+        $books = Book::all();
+        dd($books);
+        return response()->json(['data' => $books]);
+    }
 
     public function download(Request $request, $book)
     {
@@ -35,8 +67,14 @@ class BookController extends Controller
 
         try {
             $hash = md5($book . now());
+            $lock = "books/lock/$hash";
 
-            Storage::put("books/lock/$hash", "");
+            Storage::put($lock, "");
+
+            app()->terminating(function () use ($lock) {
+                sleep(self::REQUEST_EXPIRE);
+                Storage::delete($lock);
+            });
 
             return response()->json(['book' => $book], 200);
         } catch (\Exception $e) {
