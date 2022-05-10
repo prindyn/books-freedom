@@ -45,7 +45,8 @@
       <nav-menu-link title="Cards" :to="{ name: 'cards' }" :icon="icons.mdiCreditCardOutline"></nav-menu-link>
       <nav-menu-link title="Tables" :to="{ name: 'simple-table' }" :icon="icons.mdiTable"></nav-menu-link>
       <nav-menu-link title="Form Layouts" :to="{ name: 'form-layouts' }" :icon="icons.mdiFormSelect"></nav-menu-link>
-      <nav-menu-link title="Library" :to="{ name: 'library' }" :icon="icons.mdiFormSelect"></nav-menu-link>
+      <nav-menu-link title="Library" :to="{ name: 'library' }" :icon="icons.mdiLibraryShelves"></nav-menu-link>
+      <nav-menu-link title="Books" :to="{ name: 'books' }" :icon="icons.mdiBookshelf"></nav-menu-link>
     </v-list>
     <a
       href="https://themeselection.com/products/materio-vuetify-vuejs-laravel-admin-template"
@@ -75,6 +76,8 @@ import {
   mdiFormSelect,
   mdiAccountCogOutline,
   mdiElectricSwitch,
+  mdiLibraryShelves,
+  mdiBookshelf,
 } from '@mdi/js'
 import NavMenuSectionTitle from './components/NavMenuSectionTitle.vue'
 import NavMenuGroup from './components/NavMenuGroup.vue'
@@ -104,6 +107,8 @@ export default {
         mdiFormSelect,
         mdiAccountCogOutline,
         mdiElectricSwitch,
+        mdiLibraryShelves,
+        mdiBookshelf,
       },
     }
   },

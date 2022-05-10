@@ -3,9 +3,6 @@
     <template #activator="{ on, attrs }">
       <v-btn color="primary" dark v-bind="attrs" v-on="on"> New book </v-btn>
     </template>
-    <div v-if="success != ''" class="alert alert-success">
-      {{ success }}
-    </div>
     <v-card>
       <v-card-title>
         <span class="headline">Book</span>
@@ -14,15 +11,32 @@
         <v-container>
           <v-row>
             <v-col cols="12">
-              <v-text-field v-model="title" label="Title" outlined dense></v-text-field>
+              <v-text-field ref="title" v-model="book.title" label="Title" outlined dense></v-text-field>
             </v-col>
             <v-col cols="12">
-              <v-textarea v-model="desc" label="Description" outlined hide-details></v-textarea>
+              <v-textarea ref="desc" v-model="book.desc" label="Description" outlined hide-details></v-textarea>
+            </v-col>
+            <v-col cols="12" sm="6"
+              ><v-file-input
+                show-size
+                placeholder="Cover image"
+                accept="image/png, image/jpeg, image/bmp"
+                @change="onCoverChange"
+              ></v-file-input>
+            </v-col>
+            <v-col cols="12" sm="6"
+              ><v-file-input
+                show-size
+                placeholder="Source file"
+                accept="*/epub"
+                @change="onSourceChange"
+              ></v-file-input>
             </v-col>
             <v-col cols="12" sm="6">
               <v-select
-                v-model="lang"
-                :hint="`${lang.value}, ${lang.key}`"
+                ref="lang"
+                v-model="book.lang"
+                :hint="`${book.lang.value}, ${book.lang.key}`"
                 :items="langs"
                 item-text="value"
                 item-value="key"
@@ -32,18 +46,9 @@
                 single-line
               ></v-select>
             </v-col>
-            <v-col cols="12" sm="6"
-              ><v-file-input
-                show-size
-                placeholder="Book cover image"
-                accept="image/png, image/jpeg, image/bmp"
-                @change="onCoverChange"
-              ></v-file-input>
-            </v-col>
           </v-row>
         </v-container>
       </v-card-text>
-
       <v-card-actions>
         <v-spacer></v-spacer>
         <v-btn color="error" outlined @click="isDialogVisible = false"> Close </v-btn>
@@ -61,13 +66,15 @@ export default {
     const isDialogVisible = ref(false)
 
     return {
-      title: '',
-      cover: '',
-      desc: '',
-      success: '',
-      lang: {
-        key: 'ua',
-        value: 'Українська',
+      book: {
+        title: null,
+        desc: null,
+        cover: null,
+        source: null,
+        lang: {
+          key: 'ua',
+          value: 'Українська',
+        },
       },
       langs: [
         {
@@ -79,34 +86,52 @@ export default {
           value: 'Англійська',
         },
       ],
+      errors: null,
+      success: null,
       isDialogVisible,
     }
   },
   methods: {
     onCoverChange(file) {
-      this.cover = file
+      this.book.cover = file
+    },
+    onSourceChange(file) {
+      this.book.source = file
     },
     onBookStore() {
-      let existingObj = this
       const config = {
         headers: {
           'content-type': 'multipart/form-data',
         },
       }
-      let data = new FormData()
-      data.append('title', this.title)
-      data.append('cover', this.cover)
-      data.append('lang', this.lang.key)
-      data.append('desc', this.desc)
+      let obj = this.bookFormData()
       this.axios
-        .post('/api/books', data, config)
+        .post('/api/books', obj.form, config)
         .then(function ({ data }) {
-          console.log(data)
-          existingObj.success = data.success
+          obj.flashMessage.success({ message: data.message })
         })
-        .catch(function (error) {
-          existingObj.output = error
+        .catch(function ({ response }) {
+          obj.errors = response.data.errors
+          obj.flashMessage.error({ message: Object.entries(obj.errors)[0][1][0] })
         })
+    },
+    bookFormData() {
+      let obj = this
+      obj.form = new FormData()
+      for (const [key, val] of Object.entries(obj.$refs)) {
+        if (obj.book[key] instanceof Object) {
+          obj.form.append(key, obj.book[key].key)
+        } else if (obj.book[key]) {
+          obj.form.append(key, obj.book[key])
+        }
+      }
+      if (obj.book.cover) {
+        obj.form.append('cover', obj.book.cover)
+      }
+      if (obj.book.source) {
+        obj.form.append('source', obj.book.source)
+      }
+      return obj
     },
   },
 }

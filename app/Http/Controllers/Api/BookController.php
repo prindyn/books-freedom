@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use Exception;
-use lywzx\epub\EpubParser;
-use Illuminate\Http\Request;
-use App\Http\Controllers\Controller;
 use App\Models\Book;
+use Illuminate\Http\Request;
+use App\Http\Requests\BookRequest;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,18 +14,22 @@ class BookController extends Controller
 {
     const REQUEST_EXPIRE = 5;
 
-    public function store(Request $request)
+    public function store(BookRequest $request)
     {
+        $validated = $request->validated();
+        $filename = md5(uniqid() . now());
+
         if ($request->cover) {
-
-            $filename = md5(uniqid() . now()) . '.' . File::extension($request->cover->getClientOriginalName());
-
-            Storage::putFileAs("books/covers", $request->cover, $filename);
-
-            $request->merge(['cover' => $filename]);
+            $validated['cover'] = $filename . '.' . File::extension($request->cover->getClientOriginalName());
+            Storage::putFileAs("books/covers", $request->cover, $validated['cover']);
         }
 
-        $book = new Book($request->all());
+        if ($request->source) {
+            $validated['source'] = $filename . '.' . File::extension($request->source->getClientOriginalName());
+            Storage::putFileAs("books", $request->source, $validated['source']);
+        }
+
+        $book = new Book($validated);
         $book->save();
 
         return response()->json(

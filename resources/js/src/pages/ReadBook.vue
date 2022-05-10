@@ -75,7 +75,7 @@ export default {
     }
   },
   mounted() {
-    this.readBook('varta_u_gri.epub')
+    this.readBook('d19dab72d332700e827463b877f2504c.epub')
   },
   watch: {
     isBookAvailable() {

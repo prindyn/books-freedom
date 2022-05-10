@@ -5,6 +5,7 @@
         <slot></slot>
       </v-container>
     </v-main>
+    <FlashMessage></FlashMessage>
   </v-app>
 </template>
 
