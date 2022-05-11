@@ -46,6 +46,7 @@ class BookController extends Controller
 
         foreach ($books as $book) {
             $book->cover = url("images/covers/{$book->cover}");
+            $book->last_page = 0;
         }
 
         return response()->json(['books' => $books]);

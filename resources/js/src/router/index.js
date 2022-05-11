@@ -75,7 +75,7 @@ const routes = [
     },
   },
   {
-    path: '/read',
+    path: '/read/:book',
     name: 'read',
     component: () => import('@/pages/ReadBook.vue'),
     meta: {

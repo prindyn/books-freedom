@@ -75,7 +75,8 @@ export default {
     }
   },
   mounted() {
-    this.readBook('d19dab72d332700e827463b877f2504c.epub')
+    this.bookName = this.$route.params ? this.$route.params.book : ''
+    this.readBook(this.bookName)
   },
   watch: {
     isBookAvailable() {
@@ -145,18 +146,17 @@ export default {
         })
       })
     },
-    readBook(book = '') {
+    readBook(book) {
       this.loader = true
       this.book = new Book()
-      this.bookName = book ? book : this.bookName
-      this.requestBook(this.bookName).then(requested => {
+      this.requestBook(book).then(requested => {
         setTimeout(() => this.openBook(requested), 1000)
       })
     },
     requestBook(book) {
       return new Promise(resolve => {
         this.axios
-          .get('api/books/request/' + book)
+          .get('/api/books/request/' + book)
           .then(({ data }) => {
             return resolve(data.book ? data.book : '')
           })
@@ -170,7 +170,7 @@ export default {
         return (this.loader = false)
       }
       this.currentPage = this.lastPage
-      this.book.open('api/books/download/' + book, 'epub')
+      this.book.open('/api/books/download/' + book, 'epub')
       this.rendition = new Rendition(this.book, {
         flow: 'paginated',
         height: '100%',

@@ -9,12 +9,16 @@
       no-click-animation
     >
       <v-toolbar>
-        <v-toolbar-title>Title</v-toolbar-title>
+        <v-toolbar-title>
+          <history-back-btn></history-back-btn>
+          Title
+        </v-toolbar-title>
       </v-toolbar>
     </v-bottom-sheet>
   </div>
 </template>
 <script>
+import HistoryBackBtn from '../HistoryBackBtn.vue'
 export default {
   props: {
     isDrawerOpen: {
@@ -22,7 +26,10 @@ export default {
       default: null,
     },
   },
-  setup() {
+  components: {
+    HistoryBackBtn,
+  },
+  data() {
     return {}
   },
 }
