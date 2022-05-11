@@ -20,12 +20,12 @@ class BookController extends Controller
         $filename = md5(uniqid() . now());
 
         if ($request->cover) {
-            $validated['cover'] = $filename . '.' . File::extension($request->cover->getClientOriginalName());
-            Storage::putFileAs("books/covers", $request->cover, $validated['cover']);
+            $validated['cover'] = $filename . '.' . $request->cover->getClientOriginalExtension();
+            Storage::disk('images')->putFileAs("covers", $request->cover, $validated['cover']);
         }
 
         if ($request->source) {
-            $validated['source'] = $filename . '.' . File::extension($request->source->getClientOriginalName());
+            $validated['source'] = $filename . '.' . $request->source->getClientOriginalExtension();
             Storage::putFileAs("books", $request->source, $validated['source']);
         }
 
@@ -43,8 +43,12 @@ class BookController extends Controller
     public function books(Request $request)
     {
         $books = Book::all();
-        dd($books);
-        return response()->json(['data' => $books]);
+
+        foreach ($books as $book) {
+            $book->cover = url("images/covers/{$book->cover}");
+        }
+
+        return response()->json(['books' => $books]);
     }
 
     public function download(Request $request, $book)

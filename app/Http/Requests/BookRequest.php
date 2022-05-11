@@ -28,7 +28,8 @@ class BookRequest extends FormRequest
             'desc' => 'required',
             'cover' => 'required|image',
             'source' => 'required|file',
-            'lang' => 'required'
+            'lang' => 'required',
+            'author' => 'string'
         ];
     }
 }

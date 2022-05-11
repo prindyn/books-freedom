@@ -32,6 +32,19 @@
                 @change="onSourceChange"
               ></v-file-input>
             </v-col>
+            <v-col cols="12">
+              <v-combobox
+                ref="author"
+                v-model="book.author"
+                clearable
+                hide-selected
+                multiple
+                label="Authors"
+                small-chips
+                solo
+              >
+              </v-combobox>
+            </v-col>
             <v-col cols="12" sm="6">
               <v-select
                 ref="lang"
@@ -71,20 +84,12 @@ export default {
         desc: null,
         cover: null,
         source: null,
-        lang: {
-          key: 'ua',
-          value: 'Українська',
-        },
+        author: [],
+        lang: { key: 'ua', value: 'Українська' },
       },
       langs: [
-        {
-          key: 'ua',
-          value: 'Українська',
-        },
-        {
-          key: 'en',
-          value: 'Англійська',
-        },
+        { key: 'ua', value: 'Українська' },
+        { key: 'en', value: 'Англійська' },
       ],
       errors: null,
       success: null,
@@ -92,6 +97,10 @@ export default {
     }
   },
   methods: {
+    removeAuthor(item) {
+      this.book.author.splice(this.book.author.indexOf(item), 1)
+      this.book.author = [...this.book.author]
+    },
     onCoverChange(file) {
       this.book.cover = file
     },
@@ -118,8 +127,10 @@ export default {
     bookFormData() {
       let obj = this
       obj.form = new FormData()
-      for (const [key, val] of Object.entries(obj.$refs)) {
-        if (obj.book[key] instanceof Object) {
+      for (const [key, val] of Object.entries(obj.book)) {
+        if (obj.book[key] instanceof Array) {
+          obj.form.append(key, obj.book[key])
+        } else if (obj.book[key] instanceof Object) {
           obj.form.append(key, obj.book[key].key)
         } else if (obj.book[key]) {
           obj.form.append(key, obj.book[key])

@@ -19,6 +19,7 @@ Vue.prototype.auth = auth;
 Vue.config.productionTip = false
 Vue.use(VueAwesomeSwiper)
 Vue.mixin(trans);
+window.axios = axios
 
 new Vue({
   router,

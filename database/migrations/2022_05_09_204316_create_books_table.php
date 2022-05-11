@@ -18,9 +18,10 @@ class CreateBooksTable extends Migration
             $table->string('title', 255);
             $table->mediumText('desc')->nullable();
             $table->string('lang', 10);
-            $table->string('isbn')->nullable();
-            $table->string('cover')->nullable();
-            $table->string('source');
+            $table->string('isbn', 100)->nullable();
+            $table->string('cover', 100)->nullable();
+            $table->string('source', 100);
+            $table->string('author', 255)->nullable();
             $table->timestamps();
         });
     }
