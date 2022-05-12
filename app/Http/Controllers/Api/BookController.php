@@ -4,10 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use Exception;
 use App\Models\Book;
+use App\Filters\BookFilters;
 use Illuminate\Http\Request;
 use App\Http\Requests\BookRequest;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
@@ -40,9 +40,9 @@ class BookController extends Controller
         );
     }
 
-    public function books(Request $request)
+    public function books(BookFilters $filters)
     {
-        $books = Book::all();
+        $books = Book::filter($filters)->get();
 
         foreach ($books as $book) {
             $book->cover = url("images/covers/{$book->cover}");

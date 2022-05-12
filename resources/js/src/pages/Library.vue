@@ -1,8 +1,25 @@
 <template>
   <div>
+    <v-row class="space-around pt-5">
+      <v-col cols="12" class="text-center" color="black">
+        <v-text-field
+          filled
+          rounded
+          solo
+          dense
+          full-width
+          height="3rem"
+          v-model="search"
+          label="Search book..."
+          :append-icon="icons.mdiMagnify"
+          @click:append="onSearch"
+          @keyup="onSearch"
+        ></v-text-field>
+      </v-col>
+    </v-row>
     <v-row class="space-around">
       <v-col :key="key" v-for="(book, key) in books" class="py-2" cols="12" sm="6" md="4">
-        <v-sheet rounded="xl" color="white" elevation="4" class="d-flex mx-3">
+        <v-sheet rounded="xl" color="white" elevation="5" class="d-flex mx-3">
           <v-img
             height="inherit"
             max-width="5rem"
@@ -47,13 +64,15 @@
 
 <script>
 import { ref } from '@vue/composition-api'
-import { mdiEyeOutline, mdiBookOpenVariant } from '@mdi/js'
+import { mdiMagnify, mdiEyeOutline, mdiBookOpenVariant } from '@mdi/js'
 
 export default {
   data() {
     return {
       books: [],
+      search: '',
       icons: {
+        mdiMagnify,
         mdiEyeOutline,
         mdiBookOpenVariant,
       },
@@ -67,8 +86,12 @@ export default {
     this.loadBooks()
   },
   methods: {
-    loadBooks() {
-      axios.get('/api/books').then(({ data }) => {
+    onSearch() {
+      this.loadBooks(this.search)
+    },
+    loadBooks(search = '') {
+      search = search ? '?search=' + search : ''
+      axios.get('/api/books' + search).then(({ data }) => {
         this.books = data.books
       })
     },
@@ -93,5 +116,17 @@ export default {
 }
 .v-sheet > :nth-child(3) {
   color: var(--v-warning-base) !important;
+}
+.row.space-around:first-child {
+  height: 10rem;
+  background-color: $primary-shade--medium;
+}
+.row.space-around:nth-child(2) {
+  min-height: 5rem;
+  margin-top: -3rem !important;
+  padding-top: 2rem !important;
+  border-top-left-radius: 4rem !important;
+  border-top-right-radius: 4rem !important;
+  background-color: #f4f5fa !important;
 }
 </style>
