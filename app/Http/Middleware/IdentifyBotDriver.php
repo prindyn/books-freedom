@@ -3,7 +3,6 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use App\Contracts\BotFather;
 use Illuminate\Http\Request;
 use BotMan\BotMan\Drivers\DriverManager;
 

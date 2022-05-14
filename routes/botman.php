@@ -2,8 +2,9 @@
 
 use BotMan\BotMan\BotMan;
 use Illuminate\Support\Facades\Route;
-use App\Conversations\StartConversation;
 use App\Http\Controllers\Bot\MainController;
+use App\Http\Middleware\RegisterTelegramUser;
+use App\Conversations\RegistrationConversation;
 
 /*
 |--------------------------------------------------------------------------
@@ -18,7 +19,13 @@ use App\Http\Controllers\Bot\MainController;
 
 Route::post('/', function (BotMan $bot) {
 
-    $bot->hears('/start|start', MainController::class . '@start');
+    $bot->middleware->received(new RegisterTelegramUser());
+
+    $bot->hears('/start', MainController::class . '@start');
+
+    $bot->hears('/register', function ($bot) {
+        $bot->startConversation(new RegistrationConversation());
+    });
 
     $bot->fallback(function (BotMan $bot) {
         $bot->reply('Sorry, I did not understand these commands.');

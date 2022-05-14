@@ -15,7 +15,8 @@ class MainController extends Controller
         $keyboard = Keyboard::create()
             ->type(Keyboard::TYPE_INLINE)
             ->addRow(
-                KeyboardButton::create("Library")
+                KeyboardButton::create("Meet")->callbackData('/register'),
+                KeyboardButton::create("Find book")
                     ->webAppInfo(WebAppInfo::url(env('TG_WEBHOOK_URL') . '/library'))
             )
             ->toArray();
