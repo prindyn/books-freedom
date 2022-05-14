@@ -26,6 +26,9 @@ abstract class StagedConversation extends BaseConversation
     protected function nextStage()
     {
         $stage = array_shift($this->stages);
+
+        if (!$this->checkStage($stage)) return $this->nextStage();
+
         $stageMethod = 'ask' . implode('', array_map('ucfirst', explode('_', $stage)));
 
         if (!$stage || $stageMethod == 'ask') {
