@@ -84,4 +84,15 @@
       0 => 'NunoMaduro\\Collision\\Adapters\\Laravel\\CollisionServiceProvider',
     ),
   ),
+  'scriptotek/google-books' => 
+  array (
+    'providers' => 
+    array (
+      0 => 'Scriptotek\\GoogleBooks\\GoogleBooksServiceProvider',
+    ),
+    'aliases' => 
+    array (
+      'GoogleBooks' => 'Scriptotek\\GoogleBooks\\GoogleBooksFacade',
+    ),
+  ),
 );

@@ -10,11 +10,12 @@
         "botman/driver-telegram": "^1.6",
         "botman/driver-web": "^1.5",
         "fruitcake/laravel-cors": "^2.0",
-        "guzzlehttp/guzzle": "^7.0.1",
+        "guzzlehttp/guzzle": "^6.2",
         "laravel/framework": "^8.75",
         "laravel/passport": "^10.4",
         "laravel/sanctum": "^2.15",
-        "laravel/tinker": "^2.5"
+        "laravel/tinker": "^2.5",
+        "scriptotek/google-books": "^0.2.5"
     },
     "require-dev": {
         "facade/ignition": "^2.5",

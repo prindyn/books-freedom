@@ -2,13 +2,16 @@
 
 namespace App\Conversations;
 
-use BotMan\BotMan\Messages\Incoming\Answer;
-
 class RegistrationConversation extends StagedConversation
 {
-    protected $completeMessage = "Nice to meet you! 🙂";
-
     protected $stages = ['first_name', 'last_name', 'phone'];
+
+    public function __construct()
+    {
+        parent::__construct();
+        $user = $this->user->first_name ? ", {$this->user->first_name}" : "";
+        $this->completeMessage = "Nice to meet you$user! 🙂";
+    }
 
     protected function rules()
     {

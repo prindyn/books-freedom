@@ -21,17 +21,17 @@ class RegisterTelegramUser implements Received
      */
     public function received(IncomingMessage $message, $next, BotMan $bot)
     {
-        $user = TgUser::where('tg_id', $message->getSender())->first();
+        $from = $bot->getDriver()->getUser($message);
+        $user = TgUser::where('tg_id', $from->getId())->first();
 
         if (!$user) {
-            $payload = $message->getPayload();
             try {
                 $user = new TgUser([
-                    'tg_id' => $message->getSender(),
-                    'is_bot' => $payload['from']['is_bot'],
-                    'first_name' => $payload['from']['first_name'],
-                    'username' => $payload['from']['username'],
-                    'lang_code' => $payload['from']['language_code'],
+                    'tg_id' => $from->getId(),
+                    'is_bot' => $from->getInfo()['user']['is_bot'],
+                    'first_name' => $from->getFirstName(),
+                    'username' => $from->getUsername(),
+                    'lang_code' => $from->getInfo()['user']['language_code'],
                 ]);
                 $user->save();
             } catch (\Exception $e) {
@@ -39,7 +39,7 @@ class RegisterTelegramUser implements Received
             }
         }
 
-        app('botman')->dbUser = $user;
+        app('botman')->user = $user;
 
         return $next($message);
     }

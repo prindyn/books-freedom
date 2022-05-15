@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Bot\MainController;
 use App\Http\Middleware\RegisterTelegramUser;
 use App\Conversations\RegistrationConversation;
+use App\Http\Controllers\Bot\BookController;
 use App\Http\Middleware\IsBotMessageFromGroup;
 use App\Http\Middleware\IsMessageDirectToBot;
 
@@ -41,9 +42,7 @@ Route::post('/', function (BotMan $bot) {
             $bot->startConversation(new RegistrationConversation());
         });
 
-        $bot->hears('/find book {book}', function ($bot, $book) {
-            $bot->reply($book);
-        });
+        $bot->hears('/find {query}', BookController::class . '@find');
     });
 
     $bot->listen();

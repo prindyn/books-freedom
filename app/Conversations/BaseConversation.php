@@ -19,7 +19,7 @@ abstract class BaseConversation extends Conversation
     public function __construct()
     {
         $this->bot = app('botman');
-        $this->user = $this->bot->dbUser;
+        $this->user = $this->bot->user;
         $this->question = new Question(null);
     }
 
